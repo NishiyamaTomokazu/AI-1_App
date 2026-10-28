@@ -515,16 +515,37 @@ body.iframe-body {
    line-height: 1.7;
 }
 
-.prog-buttons {
-   display: grid;
-   grid-template-columns: 1fr 1fr;
-   gap: 10px 20px;
+/* 左にボタン4つ、右に説明文 */
+.prog-controls {
+   display: flex;
+   align-items: stretch;
+   gap: 16px;
    padding: 15px 20px 0;
 }
 
+.prog-buttons {
+   display: grid;
+   grid-template-columns: auto auto;
+   gap: 8px 10px;
+   flex-shrink: 0;
+}
+
+.prog-message {
+   flex: 1;
+   display: flex;
+   align-items: center;
+   padding: 10px 16px;
+   font-size: 16px;
+   line-height: 1.6;
+   color: #333;
+   background: #f8fafc;
+   border: 2px solid #ccc;
+   border-radius: 8px;
+}
+
 .prog-btn {
-   padding: 10px;
-   font-size: 18px;
+   padding: 8px 12px;
+   font-size: 14px;
    font-weight: bold;
    border: none;
    border-radius: 12px;

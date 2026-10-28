@@ -18,17 +18,20 @@
     <div class="panel-header">
         <h2>🔢 STEP2 順次処理</h2>
         <p>
-            STEP1では、手でボタンを押して光を作ったね。STEP2では、いよいよ<b>光の魔法を自動化</b>しよう！<br>
-            プログラムは、上から順番に1つずつ実行されるよ。これを<b>「順次処理」</b>というんだ。<br>
-            「音が鳴るまで待つ」「スイッチが押されるまで待つ」ブロックを使えば、<b>センサ</b>の合図で光らせることもできるよ！
+            作成したプログラムを転送、実行するとAIクロックが動きます。<br>
+            緑色のボタンを押すとサンプルプログラムが表示されるので、どのように動くか試してください。
         </p>
     </div>
 
-    <div class="prog-buttons">
-        <button class="prog-btn transfer" id="transfer-btn">🚀 プログラム転送</button>
-        <button class="prog-btn sample" id="sound-sample-btn">🎙️ 音センササンプル</button>
-        <button class="prog-btn run" id="run-btn">▶ プログラム実行</button>
-        <button class="prog-btn sample" id="switch-sample-btn">🔘 スイッチセンササンプル</button>
+    <!-- 左にボタン4つ、右に説明文 (ボタンを押すごとに変わる) -->
+    <div class="prog-controls">
+        <div class="prog-buttons">
+            <button class="prog-btn transfer" id="transfer-btn">🚀 プログラム転送</button>
+            <button class="prog-btn sample" id="sound-sample-btn">🎙️ 音センササンプル</button>
+            <button class="prog-btn run" id="run-btn">▶ プログラム実行</button>
+            <button class="prog-btn sample" id="switch-sample-btn">🔘 スイッチセンササンプル</button>
+        </div>
+        <div class="prog-message" id="prog-message">転送、実行ボタンを順に押すと、AIクロックが赤く光ります</div>
     </div>
 
     <!-- ツールエリア (左) に並べるブロック -->

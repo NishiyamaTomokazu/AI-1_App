@@ -80,14 +80,32 @@ function getStartBlock() {
     return window.workspace ? window.workspace.getBlocksByType('cmd_start')[0] : null;
 }
 
-// ===== サンプル (プログラムエリアの中身を置き換える) =====
-function loadSample(json) {
-    if (isSimulating || !window.workspace) return;
-    window.workspace.clear();
-    Blockly.serialization.workspaces.load(json, window.workspace);
+// ===== サンプル (プログラムエリアの中身を置き換え、説明文を変える) =====
+// 説明文は、そのサンプルを押すのが1回目か2回目以降かで変える (ページを開き直すと1回目に戻る)
+const SAMPLES = {
+    'sound-sample-btn': {
+        json: soundSampleBlocksJsonStep2,
+        first: '音センサに合図を送ると、AIクロックが赤く光ります',
+        again: '音センサと他のブロックを組み合わせて、光り方を変えてみよう',
+    },
+    'switch-sample-btn': {
+        json: switchSampleBlocksJsonStep2,
+        first: 'スイッチを押すと、AIクロックが赤、緑、青の順に光ります',
+        again: 'スイッチセンサと他のブロックを組み合わせて、光り方を変えてみよう',
+    },
+};
+const messageEl = document.getElementById('prog-message');
+
+for (const [id, sample] of Object.entries(SAMPLES)) {
+    let count = 0;
+    document.getElementById(id).addEventListener('click', () => {
+        if (isSimulating || !window.workspace) return;
+        window.workspace.clear();
+        Blockly.serialization.workspaces.load(sample.json, window.workspace);
+        count++;
+        messageEl.textContent = count === 1 ? sample.first : sample.again;
+    });
 }
-document.getElementById('sound-sample-btn').addEventListener('click', () => loadSample(soundSampleBlocksJsonStep2));
-document.getElementById('switch-sample-btn').addEventListener('click', () => loadSample(switchSampleBlocksJsonStep2));
 
 // ===== プログラム転送 =====
 // 「プログラムスタート」の下につながったブロックを、転送用のバイト列にする
