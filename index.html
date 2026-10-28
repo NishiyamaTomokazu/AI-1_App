@@ -19,10 +19,11 @@
         // タブの一覧。ページを増やすときはここに1行足すだけ
         //   id     : ページからタブを指定するときの名前 (window.parent.showPageById('tab-step1'))
         //   hidden : true にすると最初は隠しておき、window.parent.unlockTab(id) で表示する
+        //   resetOnLeave : true にすると、このページから別のタブへ移るときにリセット命令 [248, 240, 8] を送る
         // ==========================================
         const PAGES = [
             { url: 'pages/step0.html', label: 'STEP0', sub: '導入',       id: 'tab-step0' },
-            { url: 'pages/step1.html', label: 'STEP1', sub: '光を作ろう', id: 'tab-step1' },
+            { url: 'pages/step1.html', label: 'STEP1', sub: '光を作ろう', id: 'tab-step1', resetOnLeave: true },
             { url: 'pages/step2.html', label: 'STEP2', sub: '順次処理',   id: 'tab-step2' },
             { url: 'pages/step3.html', label: 'STEP3', sub: '反復処理',   id: 'tab-step3' },
             { url: 'pages/step4.html', label: 'STEP4', sub: '分岐処理',   id: 'tab-step4' },
@@ -49,7 +50,13 @@
             if (el) el.style.display = 'inline-block';
         };
 
+        let currentPage = -1;
         function showPage(i) {
+            const prev = PAGES[currentPage];
+            if (prev && prev.resetOnLeave && i !== currentPage) {
+                comm.sendLed(8);   // マイコンをリセット (未接続なら何もしない)
+            }
+            currentPage = i;
             buttons.forEach((b, k) => b.classList.toggle('active', k === i));
             frame.src = PAGES[i].url;
         }
