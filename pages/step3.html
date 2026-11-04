@@ -5,27 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI-1 App - STEP3</title>
 <link rel="stylesheet" href="../css/style.css">
+<!-- Blocklyのライブラリ (CDNだと読み込めないことがあるため、同梱) -->
+<script src="../vendor/blockly.min.js"></script>
 </head>
 <body class="iframe-body">
 
-<!-- ★雛形ページ: 見出しと説明文のみ。中身はこれから作る -->
-<div class="app-container step0">
-    <div class="hero-banner">
-        <div class="hero-icon">🔁</div>
-        <h1 class="hero-title">STEP3 反復処理</h1>
-    </div>
-
-    <div class="step0-content">
-        <p class="intro-text">
-            同じ動きを何度もくり返す「反復処理」を学ぼう。くり返しのブロックを使えば、短いプログラムで長い動きが作れるよ！
-        </p>
-
-        <p class="outro-text" style="cursor: pointer; font-weight: bold; color: #007bff;" onclick="goToNext()">
-            STEP4 へ進もう 👉
-        </p>
-    </div>
+<div class="top-controls prog">
+    <span class="mini-status">[ <span id="device-status">未接続</span> ]</span>
 </div>
 
+<div class="app-container prog">
+    <div class="panel-header">
+        <h2>🔁 STEP3 反復処理</h2>
+        <p>
+            作成したプログラムを転送、実行するとAIクロックが動きます。<br>
+            緑色のボタンを押すとサンプルプログラムが表示されるので、どのように動くか試してください。
+        </p>
+    </div>
+
+    <!-- 左にボタン4つ、右に説明文 (ボタンを押すごとに変わる) -->
+    <div class="prog-controls">
+        <div class="prog-buttons">
+            <button class="prog-btn transfer" id="transfer-btn">🚀 プログラム転送</button>
+            <button class="prog-btn sample" id="loop-sample1-btn">🔁 反復サンプル1</button>
+            <button class="prog-btn run" id="run-btn">▶ プログラム実行</button>
+            <button class="prog-btn sample" id="loop-sample2-btn">🔁 反復サンプル2</button>
+        </div>
+        <div class="prog-message" id="prog-message">転送、実行ボタンを押すとAIクロックが赤と青に交互に光ります</div>
+    </div>
+
+    <!-- ツールエリア (左) に並べるブロック -->
+    <xml id="toolbox" style="display: none">
+        <block type="cmd_loop">
+            <field name="COUNT">3</field>
+        </block>
+        <block type="cmd_led">
+            <field name="COLOR">red</field>
+            <field name="TIME">1</field>
+        </block>
+        <block type="cmd_wait_sound"></block>
+        <block type="cmd_wait_switch"></block>
+    </xml>
+
+    <!-- 左がツールエリア、右がプログラムエリア -->
+    <div id="blocklyDiv" class="prog-area"></div>
+
+    <p class="outro-text prog-next" onclick="goToNext()">
+        STEP4 へ進もう 👉
+    </p>
+</div>
+
+<script src="../js/blockly_config.js"></script>
 <script src="../js/step3.js"></script>
 </body>
 </html>

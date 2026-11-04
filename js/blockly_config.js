@@ -108,3 +108,95 @@ const switchSampleBlocksJsonStep2 = {
         ]
     }
 };
+
+// ==========================================
+// STEP3 用のブロック定義 (反復処理)
+//   cmd_loop → [190, 回数, 中身の先頭アドレス] … 中身 … [191, 次のアドレス]
+//   実行中は、繰り返しに入ったとき (1周目の前) だけマイコンから [190, 1] が返ってくる。入れ子にもできる
+// ==========================================
+Blockly.defineBlocksWithJsonArray([
+    {
+        "type": "cmd_loop",
+        "message0": "%1 回繰り返す",
+        "args0": [
+            { "type": "field_number", "name": "COUNT", "value": 3, "min": 1, "max": 255, "precision": 1 }
+        ],
+        "message1": "%1",
+        "args1": [
+            { "type": "input_statement", "name": "DO" }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#145c29",
+        "tooltip": "指定した回数だけ、中のプログラムを繰り返します。"
+    }
+]);
+
+// ==========================================
+// プログラムエリアに置くブロックのデータ (STEP3用)
+// ==========================================
+// 初期配置: 「プログラムスタート」->「3回繰り返す」{「赤を1秒点灯」->「青を1秒点灯」}
+const defaultBlocksJsonStep3 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_loop", "fields": { "COUNT": 3 },
+                        "inputs": {
+                            "DO": {
+                                "block": {
+                                    "type": "cmd_led", "fields": { "COLOR": "red", "TIME": 1 },
+                                    "next": { "block": { "type": "cmd_led", "fields": { "COLOR": "blue", "TIME": 1 } } }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+};
+
+// 反復サンプル1: 「プログラムスタート」->「3回繰り返す」{「赤を1秒点灯」->「消灯を1秒点灯」}
+const loopSample1BlocksJsonStep3 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_loop", "fields": { "COUNT": 3 },
+                        "inputs": {
+                            "DO": {
+                                "block": {
+                                    "type": "cmd_led", "fields": { "COLOR": "red", "TIME": 1 },
+                                    "next": { "block": { "type": "cmd_led", "fields": { "COLOR": "off", "TIME": 1 } } }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+};
+
+// 反復サンプル2: 「プログラムスタート」->「3回繰り返す」{「スイッチが押されるまで待つ」}->「赤を1秒点灯」
+const loopSample2BlocksJsonStep3 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_loop", "fields": { "COUNT": 3 },
+                        "inputs": { "DO": { "block": { "type": "cmd_wait_switch" } } },
+                        "next": { "block": { "type": "cmd_led", "fields": { "COLOR": "red", "TIME": 1 } } }
+                    }
+                }
+            }
+        ]
+    }
+};
