@@ -7,7 +7,10 @@
 //   実行: 実行コマンド (iPad: [253, 2] / HID: [241]) を送り、画面上でも実行中のブロックを光らせる。
 //         音・スイッチのブロックは、マイコンから確認コード [170, 1] / [171, 1] が届くまで待つ。
 let isSimulating = false;
+let isTransferring = false;   // 転送中 (接続・[252] 後の待ち時間を含む) は、転送・実行ボタンを受け付けない
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// WebHID で転送時に接続したとき、[252] を送ってからマイコンの動作が終わるまで待つ時間
+const HID_HELLO_WAIT_MS = 3000;
 
 const comm = window.parent.comm;
 
@@ -135,34 +138,39 @@ function buildProgramBytes(firstBlock) {
 }
 
 document.getElementById('transfer-btn').addEventListener('click', async () => {
-    if (isSimulating) return;
+    if (isSimulating || isTransferring) return;
     const startBlock = getStartBlock();
     if (!startBlock) return alert("「プログラムスタート」ブロックが見つかりません！");
 
     const payload = buildProgramBytes(startBlock.getNextBlock());
     if (payload.length === 0) return alert("転送するブロックが繋がっていません！");
 
-    // 未接続ならここで接続する (クリック操作の中なので、マイク許可・デバイス選択を出せる)
-    if (!comm.connected) {
-        if (!await comm.connect()) {
-            return alert('AI クロックに接続できませんでした。\nSTEP0 で接続してから、もう一度お試しください。');
-        }
-        updateStatus();
-        await comm.sendHello();
-    }
-
-    const programBytes = [230, 2, ...payload, 231, 250];
-    console.log('◆プログラム転送:', programBytes);
+    isTransferring = true;
     try {
+        // 未接続ならここで接続する (クリック操作の中なので、マイク許可・デバイス選択を出せる)
+        if (!comm.connected) {
+            if (!await comm.connect()) {
+                return alert('AI クロックに接続できませんでした。\nSTEP0 で接続してから、もう一度お試しください。');
+            }
+            updateStatus();
+            await comm.sendHello();
+            // HID では [252] を受けたマイコンの動作が終わるまで待ってから転送する
+            if (comm.mode === 'hid') await wait(HID_HELLO_WAIT_MS);
+        }
+
+        const programBytes = [230, 2, ...payload, 231, 250];
+        console.log('◆プログラム転送:', programBytes);
         await comm.send(programBytes);
     } catch (err) {
         console.error('プログラム転送エラー:', err);
+    } finally {
+        isTransferring = false;
     }
 });
 
 // ===== プログラム実行 =====
 document.getElementById('run-btn').addEventListener('click', async () => {
-    if (isSimulating) return;
+    if (isSimulating || isTransferring) return;
     const startBlock = getStartBlock();
     if (!startBlock) return;
 
