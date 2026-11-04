@@ -578,6 +578,14 @@ body.iframe-body {
    color: #134;
 }
 
+.prog-btn.save {
+   background: linear-gradient(135deg, #4facfe 0%, #00c6fb 100%);
+}
+
+.prog-btn.load {
+   background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
 .prog-area {
    height: 450px;
    margin: 15px 20px 0;

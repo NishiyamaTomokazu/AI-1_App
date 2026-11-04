@@ -336,3 +336,229 @@ const branchSample2BlocksJsonStep4 = {
         ]
     }
 };
+
+// ==========================================
+// STEP5 用のブロック定義 (総合)
+//   cmd_led_fade             → [131 (フェードイン) / 132 (フェードアウト), R, G, B, 次のアドレス]
+//                              終わると [131, 1] / [132, 1] が返ってくる
+//   cmd_led_conti            → [135, 色番号, 次のアドレス]   終わると [135, 1] が返ってくる
+//                              色番号 0:赤 1:緑 2:青 3:黄色 4:紫 5:水色 6:白
+//   cmd_led_off              → [136, 次のアドレス]   終わると [136, 1] が返ってくる
+//   cmd_backlight            → [140, 100, 秒×4, 次のアドレス]   終わると [140, 1] が返ってくる
+//   cmd_backlight_conti      → [141, 次のアドレス]   終わると [141, 1] が返ってくる
+//   cmd_backlight_off        → [142, 次のアドレス]   終わると [142, 1] が返ってくる
+//   cmd_sound1 / 2 / 3       → [150 / 151 / 152, 次のアドレス]   終わると [150 / 151 / 152, 1] が返ってくる
+//   cmd_music                → [153, 次のアドレス]   終わると [153, 1] が返ってくる
+//   cmd_wait_timer          → [160, T, 次のアドレス]   終わると [160, 1] が返ってくる
+//   cmd_wait_timer_or_sound  → [161, T, 次のアドレス]   終わると [161, 1] が返ってくる
+//   cmd_wait_timer_or_switch → [162, T, 次のアドレス]   終わると [162, 1] が返ってくる
+//   T (動作停止の秒数) は 1〜255、初期値は 1
+// ==========================================
+Blockly.defineBlocksWithJsonArray([
+    {
+        "type": "cmd_led_fade",
+        "message0": "%1 を %2",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "COLOR",
+                "options": [
+                    ["🔴 赤", "red"], ["🟢 緑", "green"], ["🔵 青", "blue"],
+                    ["🟡 黄色", "yellow"], ["🟣 紫", "purple"], ["🩵 水色", "cyan"],
+                    ["⚪ 白", "white"]
+                ]
+            },
+            {
+                "type": "field_dropdown",
+                "name": "FADE",
+                "options": [["フェードイン", "in"], ["フェードアウト", "out"]]
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 230,
+        "tooltip": "LEDをだんだん明るく (フェードイン)、またはだんだん暗く (フェードアウト) します。"
+    },
+    {
+        "type": "cmd_led_conti",
+        "message0": "%1 を連続点灯",
+        "args0": [
+            {
+                "type": "field_dropdown",
+                "name": "COLOR",
+                "options": [
+                    ["🔴 赤", "red"], ["🟢 緑", "green"], ["🔵 青", "blue"],
+                    ["🟡 黄色", "yellow"], ["🟣 紫", "purple"], ["🩵 水色", "cyan"],
+                    ["⚪ 白", "white"]
+                ]
+            }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 230,
+        "tooltip": "LEDを点灯したままにします。「LED消灯」で消えます。"
+    },
+    {
+        "type": "cmd_led_off",
+        "message0": "LED消灯",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 230,
+        "tooltip": "LEDを消します。"
+    },
+    {
+        "type": "cmd_backlight",
+        "message0": "バックライトを %1 秒点灯",
+        "args0": [
+            { "type": "field_number", "name": "TIME", "value": 1, "min": 0.25, "max": 31.75, "precision": 0.25 }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 230,
+        "tooltip": "時計のバックライトを指定した時間だけ点灯します。"
+    },
+    {
+        "type": "cmd_backlight_conti",
+        "message0": "バックライト連続点灯",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 230,
+        "tooltip": "時計のバックライトを点灯したままにします。「バックライト消灯」で消えます。"
+    },
+    {
+        "type": "cmd_backlight_off",
+        "message0": "バックライト消灯",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 230,
+        "tooltip": "時計のバックライトを消します。"
+    },
+    {
+        "type": "cmd_sound1",
+        "message0": "サウンド1",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#ab47bc",
+        "tooltip": "サウンド1を鳴らします。"
+    },
+    {
+        "type": "cmd_sound2",
+        "message0": "サウンド2",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#ab47bc",
+        "tooltip": "サウンド2を鳴らします。"
+    },
+    {
+        "type": "cmd_sound3",
+        "message0": "サウンド3",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#ab47bc",
+        "tooltip": "サウンド3を鳴らします。"
+    },
+    {
+        "type": "cmd_music",
+        "message0": "音楽再生",
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#ab47bc",
+        "tooltip": "音楽を再生します。"
+    },
+    {
+        "type": "cmd_wait_timer",
+        "message0": "動作停止 %1 秒",
+        "args0": [
+            { "type": "field_number", "name": "T", "value": 1, "min": 1, "max": 255, "precision": 1 }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00bcd4",
+        "tooltip": "指定した時間(秒)だけプログラムを一時停止します。"
+    },
+    {
+        "type": "cmd_wait_timer_or_sound",
+        "message0": "動作停止 %1 秒 or 音センサ",
+        "args0": [
+            { "type": "field_number", "name": "T", "value": 1, "min": 1, "max": 255, "precision": 1 }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00bcd4",
+        "tooltip": "指定した時間(秒)が経過するか、音センサが検知するまでプログラムを一時停止します。"
+    },
+    {
+        "type": "cmd_wait_timer_or_switch",
+        "message0": "動作停止 %1 秒 or SWセンサ",
+        "args0": [
+            { "type": "field_number", "name": "T", "value": 1, "min": 1, "max": 255, "precision": 1 }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#00bcd4",
+        "tooltip": "指定した時間(秒)が経過するか、スイッチが押されるまでプログラムを一時停止します。"
+    }
+]);
+
+// ==========================================
+// プログラムエリアに置くブロックのデータ (STEP5用)
+// ==========================================
+// 初期配置: 「プログラムスタート」だけ
+const defaultBlocksJsonStep5 = {
+    "blocks": {
+        "blocks": [
+            { "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false }
+        ]
+    }
+};
+
+// サンプル1: 「プログラムスタート」->「白をフェードイン」->「白をフェードアウト」
+const sample1BlocksJsonStep5 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_led_fade", "fields": { "COLOR": "white", "FADE": "in" },
+                        "next": { "block": { "type": "cmd_led_fade", "fields": { "COLOR": "white", "FADE": "out" } } }
+                    }
+                }
+            }
+        ]
+    }
+};
+
+// サンプル2: 「プログラムスタート」->「赤を連続点灯」->「バックライト連続点灯」->「動作停止3秒」
+//            ->「バックライト消灯」->「動作停止10秒 or 音センサ」
+//   (プログラムが終わると、マイコン側で LED・バックライトを消す)
+const sample2BlocksJsonStep5 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_led_conti", "fields": { "COLOR": "red" },
+                        "next": {
+                            "block": {
+                                "type": "cmd_backlight_conti",
+                                "next": {
+                                    "block": {
+                                        "type": "cmd_wait_timer", "fields": { "T": 3 },
+                                        "next": {
+                                            "block": {
+                                                "type": "cmd_backlight_off",
+                                                "next": { "block": { "type": "cmd_wait_timer_or_sound", "fields": { "T": 10 } } }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+};

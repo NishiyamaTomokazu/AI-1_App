@@ -21,7 +21,7 @@ pages/
   step2.html  順次処理   (雛形)
   step3.html  反復処理
   step4.html  分岐処理
-  step5.html  総合       (雛形)
+  step5.html  総合       (プログラムの保存・読み込みあり)
   step6.html  チャレンジ (3秒チャレンジのゲーム)
 ```
 
