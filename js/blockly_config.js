@@ -200,3 +200,139 @@ const loopSample2BlocksJsonStep3 = {
         ]
     }
 };
+
+// ==========================================
+// STEP4 用のブロック定義 (分岐処理)
+//   cmd_if / cmd_if_else → [180 (SW=ON) または 181 (SW=OFF), YESの先頭アドレス, Noの先頭アドレス]
+//   YES・No の中身の最後は、「もし〜なら」の次のブロックへ進む
+//   実行中は、判定したときにマイコンから [180, 1/0] / [181, 1/0] (1=真, 0=偽) が返ってくる
+// ==========================================
+Blockly.defineBlocksWithJsonArray([
+    {
+        "type": "cmd_if",
+        "message0": "もし〜なら %1",
+        "args0": [
+            { "type": "input_value", "name": "COND", "check": "Boolean" }
+        ],
+        "message1": "YES %1",
+        "args1": [
+            { "type": "input_statement", "name": "DO" }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#e69500",
+        "tooltip": "条件が真の時だけ、YESの中のプログラムを実行します。"
+    },
+    {
+        "type": "cmd_if_else",
+        "message0": "もし〜なら %1",
+        "args0": [
+            { "type": "input_value", "name": "COND", "check": "Boolean" }
+        ],
+        "message1": "YES %1",
+        "args1": [
+            { "type": "input_statement", "name": "DO" }
+        ],
+        "message2": "No %1",
+        "args2": [
+            { "type": "input_statement", "name": "ELSE" }
+        ],
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": "#e69500",
+        "tooltip": "条件が真の時はYES、偽の時はNoの中のプログラムを実行します。"
+    },
+    {
+        "type": "cond_switch_on",
+        "message0": "SW=ON",
+        "output": "Boolean",
+        "colour": "#4caf50",
+        "tooltip": "スイッチが押されている時に真になります。"
+    },
+    {
+        "type": "cond_switch_off",
+        "message0": "SW=OFF",
+        "output": "Boolean",
+        "colour": "#4caf50",
+        "tooltip": "スイッチが押されていない時に真になります。"
+    }
+]);
+
+// ==========================================
+// プログラムエリアに置くブロックのデータ (STEP4用)
+// ==========================================
+// 初期配置: 「プログラムスタート」->「もし SW=ON なら」 YES{「赤を1秒点灯」} No{「緑を1秒点灯」}
+const defaultBlocksJsonStep4 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_if_else",
+                        "inputs": {
+                            "COND": { "block": { "type": "cond_switch_on" } },
+                            "DO": { "block": { "type": "cmd_led", "fields": { "COLOR": "red", "TIME": 1 } } },
+                            "ELSE": { "block": { "type": "cmd_led", "fields": { "COLOR": "green", "TIME": 1 } } }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+};
+
+// 分岐サンプル1: 「プログラムスタート」->「もし SW=ON なら」 YES{「赤を1秒点灯」} ->「黄色を1秒点灯」
+const branchSample1BlocksJsonStep4 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_if",
+                        "inputs": {
+                            "COND": { "block": { "type": "cond_switch_on" } },
+                            "DO": { "block": { "type": "cmd_led", "fields": { "COLOR": "red", "TIME": 1 } } }
+                        },
+                        "next": { "block": { "type": "cmd_led", "fields": { "COLOR": "yellow", "TIME": 1 } } }
+                    }
+                }
+            }
+        ]
+    }
+};
+
+// 分岐サンプル2: 「プログラムスタート」->「もし SW=OFF なら」
+//   YES{「3回繰り返す」{「赤を1秒点灯」->「消灯を1秒点灯」}} No{「白を1秒点灯」}
+const branchSample2BlocksJsonStep4 = {
+    "blocks": {
+        "blocks": [
+            {
+                "type": "cmd_start", "x": 20, "y": 20, "deletable": false, "movable": false,
+                "next": {
+                    "block": {
+                        "type": "cmd_if_else",
+                        "inputs": {
+                            "COND": { "block": { "type": "cond_switch_off" } },
+                            "DO": {
+                                "block": {
+                                    "type": "cmd_loop", "fields": { "COUNT": 3 },
+                                    "inputs": {
+                                        "DO": {
+                                            "block": {
+                                                "type": "cmd_led", "fields": { "COLOR": "red", "TIME": 1 },
+                                                "next": { "block": { "type": "cmd_led", "fields": { "COLOR": "off", "TIME": 1 } } }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "ELSE": { "block": { "type": "cmd_led", "fields": { "COLOR": "white", "TIME": 1 } } }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+};
