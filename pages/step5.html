@@ -35,7 +35,8 @@
         </div>
         <!-- 「プログラム読み込み」で開くファイル選択 (画面には出さない) -->
         <input type="file" id="load-file" accept=".json,application/json" style="display: none">
-        <div class="prog-message" id="prog-message">左のタブを切り替えて、ブロックを組み合わせてプログラムを作ろう</div>
+        <!-- 枠は flex なので、<br> で改行するときは span で包む -->
+        <div class="prog-message" id="prog-message"><span>左の「LED」をクリックするとブロックが表示されます<br>ブロックを組み合わせてプログラムを作ろう</span></div>
     </div>
 
     <!-- ツールエリア (左) のタブと、それぞれに並べるブロック -->

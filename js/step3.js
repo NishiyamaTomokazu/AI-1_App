@@ -80,7 +80,8 @@ async function waitForCode(targetCode, targetValue) {
 window.addEventListener('load', () => {
     window.workspace = Blockly.inject('blocklyDiv', {
         toolbox: document.getElementById('toolbox'),
-        move: { scrollbars: true, drag: true, wheel: true }
+        move: { scrollbars: true, drag: true, wheel: true },
+        sounds: false   // ブロックを置いたとき・消したときの効果音を鳴らさない
     });
     Blockly.serialization.workspaces.load(defaultBlocksJsonStep3, window.workspace);
     const resizeObserver = new ResizeObserver(() => {
