@@ -134,9 +134,12 @@ window.addEventListener('load', () => {
     window.workspace = Blockly.inject('blocklyDiv', {
         toolbox: document.getElementById('toolbox'),
         move: { scrollbars: true, drag: true, wheel: true },
-        sounds: false   // ブロックを置いたとき・消したときの効果音を鳴らさない
+        sounds: false,   // ブロックを置いたとき・消したときの効果音を鳴らさない
+        // 「プログラムスタート」は1つだけ。置いてある間は、制御タブの「プログラムスタート」が灰色になる
+        maxInstances: { cmd_start: 1 }
     });
     Blockly.serialization.workspaces.load(defaultBlocksJsonStep5, window.workspace);
+    unlockStartBlocks();
     const resizeObserver = new ResizeObserver(() => {
         if (window.workspace) Blockly.svgResize(window.workspace);
     });
@@ -145,6 +148,17 @@ window.addEventListener('load', () => {
 
 function getStartBlock() {
     return window.workspace ? window.workspace.getBlocksByType('cmd_start')[0] : null;
+}
+
+const NO_START_MESSAGE = '「制御」タブから「プログラムスタート」を置いてね';
+
+// 「プログラムスタート」を動かせて、ゴミ箱に捨てられるようにする。
+// 捨てると、下につながったブロックもまとめて消える (= プログラムを削除)
+function unlockStartBlocks() {
+    window.workspace.getBlocksByType('cmd_start').forEach(b => {
+        b.setMovable(true);
+        b.setDeletable(true);
+    });
 }
 
 // ===== サンプル (プログラムエリアの中身を置き換え、説明文を変える) =====
@@ -169,6 +183,7 @@ for (const [id, sample] of Object.entries(SAMPLES)) {
         if (isSimulating || !window.workspace) return;
         window.workspace.clear();
         Blockly.serialization.workspaces.load(sample.json, window.workspace);
+        unlockStartBlocks();
         count++;
         messageEl.textContent = count === 1 ? sample.first : sample.again;
     });
@@ -238,8 +253,12 @@ loadFileInput.addEventListener('change', async () => {
     if (!file || isSimulating) return;
     let program;
     try {
-        program = JSON.parse(await file.text()).program;
-        if (!program?.blocks?.blocks?.some(b => b.type === 'cmd_start')) throw new Error('プログラムスタートがありません');
+        const data = JSON.parse(await file.text());
+        // このアプリで保存したファイルか ([プログラムスタート] を捨ててから保存したものも読み込める)
+        if (data?.app !== 'AI-1' || typeof data.program !== 'object' || data.program === null) {
+            throw new Error('AI-1 のプログラムのファイルではありません');
+        }
+        program = data.program;
     } catch (err) {
         console.error('プログラム読み込みエラー:', err);
         messageEl.textContent = 'このファイルは読み込めませんでした';
@@ -249,12 +268,14 @@ loadFileInput.addEventListener('change', async () => {
     window.workspace.clear();
     try {
         Blockly.serialization.workspaces.load(program, window.workspace);
+        unlockStartBlocks();   // 以前に保存したファイルの「プログラムスタート」も、動かして捨てられるようにする
         messageEl.textContent = 'プログラムを読み込みました';
     } catch (err) {
         // 途中まで読み込んで壊れた状態にしないよう、最初の状態に戻す
         console.error('プログラム読み込みエラー:', err);
         window.workspace.clear();
         Blockly.serialization.workspaces.load(defaultBlocksJsonStep5, window.workspace);
+        unlockStartBlocks();
         messageEl.textContent = 'このファイルは読み込めませんでした';
     }
 });
@@ -355,7 +376,7 @@ function buildProgramBytes(firstBlock) {
 document.getElementById('transfer-btn').addEventListener('click', async () => {
     if (isSimulating || isTransferring) return;
     const startBlock = getStartBlock();
-    if (!startBlock) return alert("「プログラムスタート」ブロックが見つかりません！");
+    if (!startBlock) return alert(NO_START_MESSAGE);
     if (hasEmptyCondition(startBlock.getNextBlock())) {
         return alert("「もし〜なら」に条件ブロック (SW=ON / SW=OFF) をはめてね。");
     }
@@ -429,7 +450,7 @@ async function executeBlocks(first) {
 document.getElementById('run-btn').addEventListener('click', async () => {
     if (isSimulating || isTransferring) return;
     const startBlock = getStartBlock();
-    if (!startBlock) return;
+    if (!startBlock) return alert(NO_START_MESSAGE);
 
     if (hasEmptyCondition(startBlock.getNextBlock())) {
         return alert("「もし〜なら」に条件ブロック (SW=ON / SW=OFF) をはめてね。");

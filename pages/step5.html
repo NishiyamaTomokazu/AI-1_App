@@ -61,6 +61,8 @@
             <block type="cmd_backlight_off"></block>
         </category>
         <category name="制御" colour="#e69500">
+            <!-- プログラムエリアに置けるのは1つだけ (step5.js の maxInstances)。置いてあるときは灰色になる -->
+            <block type="cmd_start"></block>
             <block type="cmd_loop">
                 <field name="COUNT">3</field>
             </block>
