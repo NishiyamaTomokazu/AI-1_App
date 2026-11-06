@@ -10,7 +10,7 @@
 //     cmd_backlight_conti      → [141, 次のアドレス]
 //     cmd_backlight_off        → [142, 次のアドレス]
 //     cmd_sound1 / 2 / 3       → [150 / 151 / 152, 次のアドレス]
-//     cmd_music                → [153, 次のアドレス]
+//     cmd_music                → [153, 1, 次のアドレス]
 //     cmd_wait_sound           → [170, 次のアドレス]
 //     cmd_wait_switch          → [171, 次のアドレス]
 //     cmd_wait_timer           → [160, T, 次のアドレス]
@@ -41,13 +41,14 @@ const lockButtons = ['sample1-btn', 'sample2-btn', 'load-btn'].map(id => documen
 const BLOCK_SIZE = {
     cmd_led: 6, cmd_led_fade: 5, cmd_led_conti: 3, cmd_led_off: 2,
     cmd_backlight: 4, cmd_backlight_conti: 2, cmd_backlight_off: 2,
-    cmd_sound1: 2, cmd_sound2: 2, cmd_sound3: 2, cmd_music: 2,
+    cmd_sound1: 2, cmd_sound2: 2, cmd_sound3: 2, cmd_music: 3,
     cmd_wait_sound: 2, cmd_wait_switch: 2,
     cmd_wait_timer: 3, cmd_wait_timer_or_sound: 3, cmd_wait_timer_or_switch: 3,
     cmd_loop: 3, cmd_if: 3, cmd_if_else: 3,
 };
 const LOOP_END_SIZE = 2;
 // [コード, 次のアドレス] の2バイトで送るブロックの命令コード
+// (cmd_music だけは [153, 1, 次のアドレス] の3バイトで送る。終了の合図 [153, 1] はほかと同じ)
 const SIMPLE_CODE = {
     cmd_led_off: 136, cmd_backlight_conti: 141, cmd_backlight_off: 142,
     cmd_sound1: 150, cmd_sound2: 151, cmd_sound3: 152, cmd_music: 153,
@@ -348,6 +349,8 @@ function buildProgramBytes(firstBlock) {
             } else if (b.type === 'cmd_backlight') {
                 const sec = Math.round(Number(b.getFieldValue('TIME')) * 4);
                 bytes.push(BACKLIGHT_CODE, 100, sec, nextAddr);
+            } else if (b.type === 'cmd_music') {
+                bytes.push(SIMPLE_CODE[b.type], 1, nextAddr);
             } else if (b.type in SIMPLE_CODE) {
                 bytes.push(SIMPLE_CODE[b.type], nextAddr);
             } else if (b.type in TIMER_CODE) {

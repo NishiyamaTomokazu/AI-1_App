@@ -348,7 +348,7 @@ const branchSample2BlocksJsonStep4 = {
 //   cmd_backlight_conti      → [141, 次のアドレス]   終わると [141, 1] が返ってくる
 //   cmd_backlight_off        → [142, 次のアドレス]   終わると [142, 1] が返ってくる
 //   cmd_sound1 / 2 / 3       → [150 / 151 / 152, 次のアドレス]   終わると [150 / 151 / 152, 1] が返ってくる
-//   cmd_music                → [153, 次のアドレス]   終わると [153, 1] が返ってくる
+//   cmd_music                → [153, 1, 次のアドレス]   終わると [153, 1] が返ってくる
 //   cmd_wait_timer          → [160, T, 次のアドレス]   終わると [160, 1] が返ってくる
 //   cmd_wait_timer_or_sound  → [161, T, 次のアドレス]   終わると [161, 1] が返ってくる
 //   cmd_wait_timer_or_switch → [162, T, 次のアドレス]   終わると [162, 1] が返ってくる
